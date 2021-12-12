@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "C:\Users\wirtm\AppData\Local\Continuum\anaconda3\lib\site-packages\proto\message.py", line 608, in __getattr__
+    pb_type = self._meta.fields[key].pb_type
+KeyError: 'bbounding_box'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\wirtm\Documents\1_Development\prg_python\machine_learning\test_ai\lib\my_ocr.py", line 61, in set_ocr_data
+    self.ocr_data.warning_words_boundings.append(word.bbounding_box)
+  File "C:\Users\wirtm\AppData\Local\Continuum\anaconda3\lib\site-packages\proto\message.py", line 613, in __getattr__
+    raise AttributeError(str(ex))
+AttributeError: 'bbounding_box'
