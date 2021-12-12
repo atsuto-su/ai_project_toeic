@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "C:\Users\wirtm\Documents\1_Development\prg_python\machine_learning\test_ai\lib\my_ocr.py", line 72, in set_ocr_data
-    if word[-1:] in ['.', '?']:
-TypeError: 'Word' object is not subscriptable
