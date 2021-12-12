@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# I/O data
+input
+output
+
+# log data
+log
+
+# vscode 
+.vscode
+
+# individual note
+memo.txt
+
+# test file
+test_opencv 
