@@ -1,0 +1,20 @@
+{
+    "fullText": "",
+    "paragraphs": {
+        "texts": [],
+        "bounding_boxes": []
+    },
+    "sentences": {
+        "texts": [],
+        "bounding_boxes": [],
+        "languages": []
+    },
+    "words": {
+        "texts": [],
+        "confidences": [],
+        "bounding_boxes": [],
+        "languages": []
+    },
+    "warning_words_boundings": [],
+    "failed_words_boundings": []
+}
