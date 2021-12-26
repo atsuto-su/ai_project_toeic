@@ -3,8 +3,8 @@ import traceback
 import datetime
 
 #Imports the Google Cloud client library
-from lib.google_ocr import GoogleOcr
-from lib.my_json_object import MyJsonObject
+from lib.vision.google_ocr import GoogleOcr
+from lib.vision.my_json_object import MyJsonObject
 
 class MyOcr(GoogleOcr):
     def __init__(self, schema_file) -> None:
@@ -111,6 +111,9 @@ class MyOcr(GoogleOcr):
 
     def get_ocr_data(self) -> MyJsonObject:
         return self.ocr_data
+
+    def get_ocr_text(self) -> str:
+        return '\n'.join(self.ocr_data.sentences.texts)
 
     def output_word_data(self, file_name) -> None:
         with open(file_name, 'wt', encoding='utf-8') as f: 

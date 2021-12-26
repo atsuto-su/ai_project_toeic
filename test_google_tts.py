@@ -1,5 +1,5 @@
-from lib.google_text_to_speech import GoogleTextToSpeech
-from lib.mp3_to_m4a import mp3_to_m4a
+from lib.speech.google_text_to_speech import GoogleTextToSpeech
+from lib.speech.mp3_to_m4a import mp3_to_m4a
 
 from set_credentials import set_credentials
 

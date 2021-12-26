@@ -1,7 +1,12 @@
-from google.cloud import texttospeech
+import os
 import ffmpeg
 
+from google.cloud import texttospeech
+
 class GoogleTextToSpeech:
+
+    MAX_SPEAK_SPEED = 1.5
+    MIN_SPEAK_SPEED = 0.25  
 
     def __init__(self):
         # set default voice
@@ -30,10 +35,34 @@ class GoogleTextToSpeech:
         self.voice_name="en-GB-Wavenet-F"
         self.ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
 
+    def set_voice_male(self, voice_type=0):
+        if voice_type == 0:
+            self.set_voice_enus_male()
+        else:
+            self.set_voice_engb_male()
+    
+    def set_voice_female(self, voice_type=0):
+        if voice_type == 0:
+            self.set_voice_enus_female()
+        else:
+            self.set_voice_engb_female()
+
     def set_speak_fast(self):
         self.speak_speed = 1.5
 
+    def set_speak_speed(self, speak_speed):
+        if speak_speed < GoogleTextToSpeech.MIN_SPEAK_SPEED:
+            self.speak_speed = GoogleTextToSpeech.MIN_SPEAK_SPEED
+        elif speak_speed > GoogleTextToSpeech.MAX_SPEAK_SPEED:
+            self.speak_speed = GoogleTextToSpeech.MAX_SPEAK_SPEED
+        else:
+            self.speak_speed = speak_speed
+
     def synthesize_text(self, text, outfile):
+
+        # check outfile extension
+        if os.path.splitext(outfile)[1] != ".mp4":
+            raise Exception("wrong file extension: outfile extension must be mp4." + "\n" + "file path: " + outfile)
 
         client = texttospeech.TextToSpeechClient()
         input_text = texttospeech.SynthesisInput(text=text)
@@ -56,7 +85,7 @@ class GoogleTextToSpeech:
             request={"input": input_text, "voice": voice, "audio_config": audio_config}
         )
 
-        # The response's audio_content is binary.
+       # The response's audio_content is binary.
         with open(outfile, "wb") as out:
             out.write(response.audio_content)
     
@@ -65,6 +94,7 @@ class GoogleTextToSpeech:
         # https://stackoverflow.com/questions/59819936/adding-a-pause-in-google-text-to-speech
 
     def mp3_to_m4a(mp3_file):
+        # this function is necessary when you want to send voice data in LINE bot. (only m4a is compatible)
         '''
             reference:
             - https://pypi.org/project/ffmpeg-python/

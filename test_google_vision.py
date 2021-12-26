@@ -1,8 +1,8 @@
 # Google Vision API Test
 import os
 
-from lib.my_ocr import MyOcr
-from lib import create_schema
+from lib.vision.my_ocr import MyOcr
+from lib.vision import create_schema
 
 from set_credentials import set_credentials
 
