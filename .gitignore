@@ -6,6 +6,7 @@ __pycache__/
 # I/O data
 input
 output
+intermediate
 
 # log data
 log
@@ -17,4 +18,4 @@ log
 memo.txt
 
 # test file
-test_opencv 
+test
