@@ -1,21 +1,28 @@
 from lib.vision.my_ocr import MyOcr
-# from lib.speech.google_text_to_speech import GoogleTextToSpeech
-import lib.speech.exec_my_tts as exec_my_tts
+from lib.speech.my_text_to_speech import MyTextToSpeech
 
 class ToeicTextConverter():
+
+    FAST_SPEAK_SPEED = 1.5
+    NORMAL_SPEAK_SPEED = 1.0
+    SLOW_SPEAK_SPEED = 0.5
+
+    VOICE_TYPE_US = 0
+    VOICE_TYPE_GB = 1
+
     def __init__(self):
         pass
 
     def part1_conv(self, img_file, out_file, intermed_file="") -> None:
-        #input: image file
-        #output: speech text (single speaker)
-        # img_text = exec_my_ocr.exec_ocr(img_file, intermed_file)
-
+        '''
+            input: image file
+            output: speech text (single speaker)
+        '''
         # execute OCR
         ocr = MyOcr(img_file)
         ocr_string = ocr.get_ocr_text()
 
-       # save ocr string if save file is set
+        # save ocr string if save file is set
         if intermed_file:
             ocr.save_ocr_text(intermed_file)
 
@@ -24,8 +31,13 @@ class ToeicTextConverter():
             print("uncertain ocr results exist.")
 
         else:
-            # get google vision response and parsed ocr data
-            exec_my_tts.single_speaker_tts(ocr_string, out_file)
+            # execute tts
+            speaker = MyTextToSpeech(
+                        set_female=True, 
+                        voice_type=ToeicTextConverter.VOICE_TYPE_US, 
+                        speak_speed=ToeicTextConverter.NORMAL_SPEAK_SPEED
+                     )
+            speaker.synthesize_text(ocr_string, out_file)
 
     def part2_conv(self, img_file, out_file) -> None:
         self.part1_conv(img_file, out_file)
