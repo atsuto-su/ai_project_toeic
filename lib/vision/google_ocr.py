@@ -10,10 +10,11 @@ class GoogleOcr():
     '''
         common process for google vision api (ocr)
     '''
-    def __init__(self):
-        pass
+    def __init__(self, ocr_file):
+        self.ocr_response = ""
+        self.set_ocr_response(ocr_file)
 
-    def set_ocr_response(self, file_name) -> None:
+    def set_ocr_response(self, ocr_file) -> None:
         # Instantiates a client
         client = vision.ImageAnnotatorClient()
         # if you want to authenticate here, write as below
@@ -22,10 +23,10 @@ class GoogleOcr():
         # client = vision.ImageAnnotatorClient(credentials=credentials)
 
         # The name of the image file to annotate
-        file_path = os.path.abspath(file_name)
+        ocr_file_path = os.path.abspath(ocr_file)
 
         # Loads the image into memory
-        with io.open(file_path, 'rb') as image_file:
+        with io.open(ocr_file_path, 'rb') as image_file:
             content = image_file.read()
 
         image = vision.Image(content=content)
@@ -42,14 +43,14 @@ class GoogleOcr():
     def get_ocr_response(self):
         return self.ocr_response
 
-    def output_ocr_response(self, file_name) -> None:
-        with open(file_name, 'wt', encoding='utf-8') as f:
+    def save_ocr_response(self, save_file) -> None:
+        with open(save_file, 'wt', encoding='utf-8') as f:
             f.write(str(self.ocr_response))
 
     def draw_boxes(image, bounds, color) -> Image:
-        """Draw a border around the image using the hints in the vector list.
-            bound in bounds = (x1,y1, x2,y2, x3,y3, x4,y4),
-            1->up left, 2-> up right, 3->botton right, 4-> bottom left
+        """ Draw a border around the image using the hints in the vector list.
+            bound in bounds = (x0,y0, x1,y1, x2,y2, x3,y3),
+            0->up left, 1-> up right, 2->botton right, 3-> bottom left
         """
         draw = ImageDraw.Draw(image)
 

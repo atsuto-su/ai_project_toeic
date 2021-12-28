@@ -18,9 +18,9 @@ toeic_converter = ToeicTextConverter()
 part1_folder = "Part1"
 img_file = "01.jpg"
 
-input_file = "/".join([input_folder, part1_folder, img_file])
-intermed_file = "/".join([intermed_folder, part1_folder, os.path.basename(input_file).replace(".jpg", ".txt")])
-output_file = "/".join([output_folder, part1_folder, os.path.basename(input_file).replace(".jpg", ".mp4")])
+input_file = os.path.join(*[input_folder, part1_folder, img_file])
+intermed_file =  os.path.join(*[intermed_folder, part1_folder, os.path.basename(input_file).replace(".jpg", ".txt")])
+output_file = os.path.join(*[output_folder, part1_folder, os.path.basename(input_file).replace(".jpg", ".mp4")])
 
 toeic_conv = ToeicTextConverter()
 toeic_conv.part1_conv(input_file, output_file, intermed_file)

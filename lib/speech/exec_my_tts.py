@@ -1,11 +1,10 @@
 import os
 import ffmpeg
-from lib.speech.google_text_to_speech import GoogleTextToSpeech
-#from lib.speech.mp3_to_m4a import mp3_to_m4a
+from .google_text_to_speech import GoogleTextToSpeech
+#from .speech.mp3_to_m4a import mp3_to_m4a
 
 def single_speaker_tts(text_string, out_file, voice_type=0, speak_speed=1.0) -> None:
-    speaker = GoogleTextToSpeech()
-    speaker.set_speak_speed(speak_speed)
+    speaker = GoogleTextToSpeech(speak_speed)
     speaker.set_voice_male(voice_type)
     speaker.synthesize_text(text_string, out_file)
 

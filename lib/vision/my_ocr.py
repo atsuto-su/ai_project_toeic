@@ -1,21 +1,73 @@
+import os
 import json
 import traceback
 import datetime
 
 #Imports the Google Cloud client library
-from lib.vision.google_ocr import GoogleOcr
-from lib.vision.my_json_object import MyJsonObject
+# from lib.vision.google_ocr import GoogleOcr
+# from lib.vision.my_json_object import MyJsonObject
+from .google_ocr import GoogleOcr
+from .my_json_object import MyJsonObject
 
 class MyOcr(GoogleOcr):
-    def __init__(self, schema_file) -> None:
-        self.init_ocr_data(schema_file)
+    ##########################
+    # initialization #
+    ##########################
+    def __init__(self, ocr_file) -> None:
+        self.response = ""
+        self.ocr_data = ""
+        self.ocr_text = ""
+        self.failed_str_exist = False
+        self.uncertain_str_exist = False
 
-    def init_ocr_data(self, schema_file) -> None:
-       # initialize ocr data with MyJsonObject schema
+        self.init_ocr_data()
+        self.set_ocr_data(ocr_file)
+        self.set_ocr_text()
+
+    def init_ocr_data(self) -> None:
+        # create json schema if not exists
+        schema_file = os.path.join(os.path.dirname(__file__), 'json_schema.json')
+        if not os.path.isfile(schema_file):
+            self.set_ocr_data_schema(schema_file)
+
+        # initialize ocr data with MyJsonObject schema
         with open(schema_file, mode='rt', encoding='utf-8') as f:
             self.ocr_data = json.load(f, object_hook=MyJsonObject)
 
-    def set_ocr_data(self, file_name) -> None:
+
+    def set_ocr_data_schema(self, schema_file) -> None:
+        ### TBM: want to change so that json-file becomes unnecessary ###
+        schema_dic = {
+            "fullText": "",
+            "paragraphs": {
+                "texts": [],
+                # "confidences": [],
+                "bounding_boxes": []
+            },
+            "sentences": {
+                "texts": [],
+                # "confidences": [],
+                "bounding_boxes": [],
+                "languages": []
+            },
+            "words": {
+                "texts": [],
+                "confidences": [],
+                "bounding_boxes": [],
+                "languages": []
+            },
+            "warning_words_boundings": [],
+            "failed_words_boundings": []
+        }
+        # t: text mode
+        with open(schema_file, mode='wt', encoding='utf-8') as f:
+            json.dump(schema_dic, f, ensure_ascii=False, indent=4)
+
+
+    ##########################
+    # setter #
+    ##########################
+    def set_ocr_data(self, ocr_file) -> None:
         '''Returns orc results as json-formed dictionary
         Args:
         - file_name (str)
@@ -23,9 +75,9 @@ class MyOcr(GoogleOcr):
         # constants
         CONF_ERR_BORDER = 0.3
         CONF_WARNING_BORDER = 0.7
-        WARNING_STRING = '{}(*)'
+        WARNING_STRING = '(*)'
 
-        self.set_ocr_response(file_name)
+        self.set_ocr_response(ocr_file)
 
         # assign ocr results to schema
         self.ocr_data.fullText = self.ocr_response.text_annotations[0].description
@@ -50,12 +102,14 @@ class MyOcr(GoogleOcr):
                                     str_detected_break = ''
                             # delete/mark the word according to its confidence
                             if word.confidence <= CONF_ERR_BORDER:
+                                ### NOTE empty is okay? ###
                                 word_tmp = ''
                                 self.ocr_data.failed_words_boundings.append(word.bounding_box)
+                                self.failed_str_exist = True
                             elif word.confidence <= CONF_WARNING_BORDER:
-                                word_tmp = WARNING_STRING.format(word_tmp)
+                                word_tmp += WARNING_STRING
                                 self.ocr_data.warning_words_boundings.append(word.bounding_box)
-
+                                self.uncertain_str_exist = True
                             # assign words data
                             self.ocr_data.words.texts.append(word_tmp)
                             self.ocr_data.words.confidences.append(word.confidence)
@@ -70,7 +124,7 @@ class MyOcr(GoogleOcr):
                             sentence_tmp += word_tmp
 
                             # paragraph跨ぎになっているので、修正必要
-                            if word_tmp[-1:] in ['.', '?']:
+                            if word_tmp.strip(WARNING_STRING)[-1:] in ['.', '?']:
                                 self.ocr_data.sentences.texts.append(sentence_tmp)
                                 paragraph_tmp += sentence_tmp + '\n'
                                 sentence_tmp = ''
@@ -82,19 +136,7 @@ class MyOcr(GoogleOcr):
                                 else:
                                     sentence_tmp += '_'
 
-                            '''
-                            if any(s in str_detected_break for s in ['.SPACE', '.SURE_SPACE']):
-                                sentence_tmp += ' '
-                            elif any(s in str_detected_break for s in ['.EOL_SURE_SPACE', '.LINE_BREAK']):
-                                self.ocr_data.sentences.texts.append(sentence_tmp)
-                                paragraph_tmp += sentence_tmp + '\n'
-                                sentence_tmp = ''
-                            elif any(s in str_detected_break for s in ['.HYPHEN', '']):
-                                sentence_tmp += ''
-                            else: 
-                                sentence_tmp += '_'
-                            '''
-                        # assign paragraph data
+                       # assign paragraph data
                         self.ocr_data.paragraphs.texts.append(paragraph_tmp)
                         self.ocr_data.paragraphs.bounding_boxes.append(paragraph.bounding_box)
         except:
@@ -109,24 +151,39 @@ class MyOcr(GoogleOcr):
             # re rase the error
             raise
 
+    def set_ocr_text(self) -> None:
+        self.ocr_text = '\n'.join(self.ocr_data.sentences.texts)
+
+
+    ##########################
+    # getter #
+    ##########################
     def get_ocr_data(self) -> MyJsonObject:
         return self.ocr_data
 
     def get_ocr_text(self) -> str:
-        return '\n'.join(self.ocr_data.sentences.texts)
+        return self.ocr_text
 
-    def output_word_data(self, file_name) -> None:
-        with open(file_name, 'wt', encoding='utf-8') as f: 
+
+    ##########################
+    # save method #
+    ##########################
+    def save_word_data(self, save_file) -> None:
+        with open(save_file, 'wt', encoding='utf-8') as f: 
             for index, _ in enumerate(self.ocr_data.words.texts):
                 f.write(self.ocr_data.words.texts[index] + ",")
                 f.write(str(self.ocr_data.words.confidences[index]) + ",")
                 f.write(str(self.ocr_data.words.bounding_boxes[index]) + ",")
                 f.write(str(self.ocr_data.words.languages[index]) + "\n---------------------\n") 
 
-    def output_sentence_data(self, file_name) -> None:
-        with open(file_name, 'wt', encoding='utf-8') as f:
+    def save_sentence_data(self, save_file) -> None:
+        with open(save_file, 'wt', encoding='utf-8') as f:
             f.write('\n'.join(self.ocr_data.sentences.texts))
 
-    def output_paragraph_data(self, file_name) -> None:
-        with open(file_name, 'wt', encoding='utf-8') as f:
+    def save_paragraph_data(self, save_file) -> None:
+        with open(save_file, 'wt', encoding='utf-8') as f:
             f.write('\n\n'.join(self.ocr_data.paragraphs.texts))
+
+    def save_ocr_text(self, save_file) -> None:
+        with open(save_file, 'wt', encoding='utf-8') as f:
+            f.write(self.ocr_text)
