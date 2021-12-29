@@ -48,7 +48,7 @@ class MyOcr(GoogleOcr):
                 "texts": [],
                 # "confidences": [],
                 "bounding_boxes": [],
-                "languages": []
+                # "languages": []
             },
             "words": {
                 "texts": [],
@@ -110,6 +110,7 @@ class MyOcr(GoogleOcr):
                                 word_tmp += WARNING_STRING
                                 self.ocr_data.warning_words_boundings.append(word.bounding_box)
                                 self.uncertain_str_exist = True
+                                # print("ocr uncertain: " + word_tmp)
                             # assign words data
                             self.ocr_data.words.texts.append(word_tmp)
                             self.ocr_data.words.confidences.append(word.confidence)
@@ -135,8 +136,10 @@ class MyOcr(GoogleOcr):
                                     sentence_tmp += ''
                                 else:
                                     sentence_tmp += '_'
+                        if sentence_tmp not in self.ocr_data.sentences.texts:
+                            self.ocr_data.sentences.texts.append(sentence_tmp)
 
-                       # assign paragraph data
+                        # assign paragraph data
                         self.ocr_data.paragraphs.texts.append(paragraph_tmp)
                         self.ocr_data.paragraphs.bounding_boxes.append(paragraph.bounding_box)
         except:

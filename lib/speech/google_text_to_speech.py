@@ -1,17 +1,14 @@
 import os
 from google.cloud import texttospeech
 
+from .speech_const import *
+
 class GoogleTextToSpeech:
-
-    MAX_SPEAK_SPEED = 1.5
-    MIN_SPEAK_SPEED = 0.25  
-    DEFAULT_SPEAK_SPEED = 1.0
-
     def __init__(self):
         self.language_code = ""
         self.voice_name = ""
         self.ssml_gender = ""
-        self.speak_speed = GoogleTextToSpeech.DEFAULT_SPEAK_SPEED
+        self.speak_speed = DEFAULT_SPEAK_SPEED
 
     # for more options of voices, see https://cloud.google.com/text-to-speech/docs/voices?hl=ja
     def set_voice_enus_male(self):
@@ -35,10 +32,10 @@ class GoogleTextToSpeech:
         self.ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
 
     def set_speak_speed(self, speak_speed):
-        if speak_speed < GoogleTextToSpeech.MIN_SPEAK_SPEED:
-            self.speak_speed = GoogleTextToSpeech.MIN_SPEAK_SPEED
-        elif speak_speed > GoogleTextToSpeech.MAX_SPEAK_SPEED:
-            self.speak_speed = GoogleTextToSpeech.MAX_SPEAK_SPEED
+        if speak_speed < MIN_SPEAK_SPEED:
+            self.speak_speed = MIN_SPEAK_SPEED
+        elif speak_speed > MAX_SPEAK_SPEED:
+            self.speak_speed = MAX_SPEAK_SPEED
         else:
             self.speak_speed = speak_speed
 

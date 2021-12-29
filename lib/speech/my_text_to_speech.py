@@ -1,4 +1,6 @@
 import ffmpeg
+
+from .speech_const import *
 from .google_text_to_speech import GoogleTextToSpeech
 
 class MyTextToSpeech(GoogleTextToSpeech):
@@ -17,17 +19,23 @@ class MyTextToSpeech(GoogleTextToSpeech):
             self.set_voice_male(voice_type)
 
     def set_voice_male(self, voice_type=0):
-        if voice_type == 0:
+        if voice_type == VOICE_TYPE_US:
             super().set_voice_enus_male()
-        else:
+        elif voice_type == VOICE_TYPE_GB:
             super().set_voice_engb_male()
+        else: 
+            print("Error: undefined voice type has been designated.")
+            raise
     
     def set_voice_female(self, voice_type=0):
-        if voice_type == 0:
+        if voice_type == VOICE_TYPE_US:
             super().set_voice_enus_female()
-        else:
+        elif voice_type == VOICE_TYPE_GB:
             super().set_voice_engb_female()
-
+        else:
+            print("Error: undefined voice type has been designated.")
+            raise
+ 
     def mp3_to_m4a(mp3_file):
         # this function is necessary when you want to send voice data in LINE bot. (only m4a is compatible)
         '''
