@@ -1,4 +1,6 @@
 import ffmpeg
+import html
+import re
 
 from .speech_const import *
 from .google_text_to_speech import GoogleTextToSpeech
@@ -48,3 +50,35 @@ class MyTextToSpeech(GoogleTextToSpeech):
         stream = ffmpeg.output(stream, mp3_file.replace(".mp3", ".m4a"))
         ffmpeg.run(stream)
 
+    def text_to_ssml(self, text, breaktime=0):
+        # Convert plaintext to SSML
+        ssml = '<speak>{}</speak>'.format(
+            html.escape(text)
+        )
+
+        # Wait designated seconds between each address
+        if breaktime != 0:
+            ssml = ssml.replace('\n', '\n<break time="' + str(breaktime) + 's"/>')
+
+        # Define enumerated items as characters
+        for enum_mark in ENUM_MARKERS:
+            if enum_mark in ssml:
+                ssml = ssml.replace(enum_mark, 
+                            '<say-as interpret-as="characters">'
+                                + re.sub("[()]", "", enum_mark) + 
+                            '</say-as>' + "!" +
+                        '<break time="' + str(ENUM_BREAK) + 's"/>'
+                        )
+
+        # Return the concatenated string of ssml script
+        return ssml
+    
+    # change voice: <voice language="en-GB" gender="male" required="gender"> ~~~ </ voice>
+
+    def synthesize_text(self, speak_text, out_file, ssml_syn=False, breaktime=0):
+        if ssml_syn:
+            ssml_text = self.text_to_ssml(speak_text, breaktime)
+            print(ssml_text)
+            self.ssml_to_audio(ssml_text, out_file)
+        else:
+            super().synthesize_text(speak_text, out_file)

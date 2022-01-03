@@ -21,7 +21,7 @@ set_credentials()
 # インプットフォルダ・アウトプットフォルダを指定するだけ。
 part1_folder = "Part1"
 img_file = "10.jpg"
-exec_mode = MODE_TTS_ONLY
+exec_mode = MODE_TTS_ONLY # MODE_OCR_TTS  MODE_TTS_ONLY
 exec_part = 1
 
 input_file = os.path.join(*[input_folder, part1_folder, img_file])

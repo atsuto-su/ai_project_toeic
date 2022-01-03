@@ -10,3 +10,5 @@ SLOW_SPEAK_SPEED = 0.5
 VOICE_TYPE_US = 0
 VOICE_TYPE_GB = 1
 
+ENUM_MARKERS = ['(A)', '(B)', '(C)', '(D)']
+ENUM_BREAK = 1
