@@ -26,7 +26,7 @@ exec_part = 1
 
 input_file = os.path.join(*[input_folder, part1_folder, img_file])
 intermed_file =  os.path.join(*[intermed_folder, part1_folder, os.path.basename(input_file).replace(".jpg", ".txt")])
-output_file = os.path.join(*[output_folder, part1_folder, os.path.basename(input_file).replace(".jpg", ".mp4")])
+output_file = os.path.join(*[output_folder, part1_folder, os.path.basename(input_file).replace(".jpg", ".mp3")])
 
 # OCR Part
 if exec_mode == MODE_OCR_TTS:

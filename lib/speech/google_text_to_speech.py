@@ -62,8 +62,8 @@ class GoogleTextToSpeech:
     def synthesize_text(self, speak_text, out_file):
 
         # check outfile extension
-        if os.path.splitext(out_file)[1] != ".mp4":
-            raise Exception("wrong file extension: outfile extension must be mp4." + "\n" + "file path: " + out_file)
+        if os.path.splitext(out_file)[1] != ".mp3":
+            raise Exception("wrong file extension: outfile extension must be mp3." + "\n" + "file path: " + out_file)
 
         client = texttospeech.TextToSpeechClient()
         input_text = texttospeech.SynthesisInput(text=speak_text)
@@ -95,8 +95,8 @@ class GoogleTextToSpeech:
         # nothing
 
         # check outfile extension
-        if os.path.splitext(outfile)[1] != ".mp4":
-            raise Exception("wrong file extension: outfile extension must be mp4." + "\n" + "file path: " + outfile)
+        if os.path.splitext(outfile)[1] != ".mp3":
+            raise Exception("wrong file extension: outfile extension must be mp3." + "\n" + "file path: " + outfile)
 
         # Instantiates a client
         client = texttospeech.TextToSpeechClient()
